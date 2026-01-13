@@ -91,23 +91,16 @@ function App() {
     return (
         <div className="app-container">
             {/* Sidebar */}
-            <aside style={{
-                width: 'var(--sidebar-width)',
-                background: 'var(--bg-sidebar)',
-                color: 'white',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '1.5rem'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
-                    <div style={{ background: 'rgba(255,255,255,0.2)', padding: '0.5rem', borderRadius: '0.75rem' }}>
-                        <HomeIcon size={24} />
+            <aside className="sidebar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '3rem', paddingLeft: '0.5rem' }}>
+                    <div style={{ background: 'var(--primary)', padding: '0.625rem', borderRadius: '0.875rem', boxShadow: '0 4px 12px rgba(217, 119, 6, 0.4)' }}>
+                        <HomeIcon size={24} color="white" />
                     </div>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>Happy House</span>
+                    <span style={{ fontSize: '1.375rem', fontWeight: '800', letterSpacing: '-0.02em' }}>Happy House</span>
                 </div>
 
-                <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <p style={{ fontSize: '0.75rem', textTransform: 'uppercase', opacity: 0.6, marginBottom: '0.5rem', paddingLeft: '0.5rem' }}>Menu chính</p>
+                <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.5, marginBottom: '0.75rem', paddingLeft: '1rem', fontWeight: '700', letterSpacing: '0.05em' }}>Hệ thống</p>
                     <MenuLink to="/" icon={<LayoutDashboard size={20} />} label="Dashboard" />
                     <MenuLink to="/rooms" icon={<HomeIcon size={20} />} label="Quản lý phòng" />
                     <MenuLink to="/rent" icon={<UserPlus size={20} />} label="Thuê phòng" />
@@ -117,18 +110,8 @@ function App() {
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem', marginTop: 'auto' }}>
                     <div
                         onClick={handleLogout}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.75rem',
-                            padding: '0.75rem 1rem',
-                            borderRadius: '0.75rem',
-                            cursor: 'pointer',
-                            opacity: 0.8,
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                        className="nav-link"
+                        style={{ cursor: 'pointer' }}
                     >
                         <LogOut size={20} />
                         <span>Đăng xuất</span>
@@ -138,38 +121,30 @@ function App() {
 
             {/* Main Content Area */}
             <main className="main-content">
-                <header style={{
-                    height: 'var(--header-height)',
-                    background: 'white',
-                    borderBottom: '1px solid var(--border)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0 2rem'
-                }}>
-                    <div style={{ position: 'relative', width: '300px' }}>
-                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <header className="app-header">
+                    <div className="search-input-wrapper" style={{ width: '360px' }}>
+                        <Search size={18} />
                         <input
                             type="text"
-                            placeholder="Tìm kiếm nhanh..."
-                            style={{ width: '100%', padding: '0.5rem 1rem 0.5rem 2.5rem', borderRadius: '2rem', border: '1px solid var(--border)', fontSize: '0.875rem', background: '#f1f5f9' }}
+                            placeholder="Tìm kiếm thông tin..."
+                            className="search-input"
                         />
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                        <button style={{ position: 'relative', background: 'none', border: 'none', color: 'var(--text-muted)' }}>
-                            <Bell size={20} />
-                            <span style={{ position: 'absolute', top: '-4px', right: '-4px', width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', border: '2px solid white' }}></span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                        <button style={{ position: 'relative', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                            <Bell size={22} />
+                            <span style={{ position: 'absolute', top: '0', right: '0', width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%', border: '2px solid white' }}></span>
                         </button>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.5rem', borderRadius: 'var(--radius-md)', transition: 'all 0.2s' }}>
                             <div style={{ textAlign: 'right' }}>
-                                <p style={{ fontSize: '0.875rem', fontWeight: '600' }}>{user?.displayName || 'Admin'}</p>
-                                <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Administrator</p>
+                                <p style={{ fontSize: '0.9375rem', fontWeight: '700' }}>{user?.displayName || 'Admin'}</p>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>Quản lý viên</p>
                             </div>
                             <img
-                                src={user?.photoURL || "https://ui-avatars.com/api/?name=Admin&background=0ea5e9&color=fff"}
+                                src={user?.photoURL || `https://ui-avatars.com/api/?name=${user?.displayName || 'Admin'}&background=d97706&color=fff`}
                                 alt="Avatar"
-                                style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid var(--border)' }}
+                                style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', border: '2px solid white', boxShadow: 'var(--shadow-sm)' }}
                             />
                         </div>
                     </div>
@@ -182,9 +157,12 @@ function App() {
                         <Route path="/rent" element={<ProtectedRoute user={user}><RentRoom /></ProtectedRoute>} />
                         <Route path="/tenants" element={
                             <ProtectedRoute user={user}>
-                                <div className="page-container">
-                                    <h2>Khách thuê</h2>
-                                    <p>Chức năng đang được cập nhật...</p>
+                                <div className="page-container glass-card" style={{ margin: '2.5rem' }}>
+                                    <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>Khách thuê</h2>
+                                    <div style={{ padding: '3rem', textAlign: 'center', background: 'rgba(217, 119, 6, 0.03)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--border)' }}>
+                                        <Users size={48} style={{ color: 'var(--primary)', marginBottom: '1rem', opacity: 0.5 }} />
+                                        <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Chức năng đang được phát triển...</p>
+                                    </div>
                                 </div>
                             </ProtectedRoute>
                         } />
@@ -199,19 +177,7 @@ function MenuLink({ to, icon, label }) {
     return (
         <NavLink
             to={to}
-            style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '0.875rem 1rem',
-                borderRadius: '0.75rem',
-                textDecoration: 'none',
-                color: 'white',
-                background: isActive ? 'rgba(255,255,255,0.15)' : 'transparent',
-                fontWeight: isActive ? '600' : '400',
-                transition: 'all 0.2s',
-                opacity: isActive ? 1 : 0.8
-            })}
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
         >
             {icon}
             <span>{label}</span>

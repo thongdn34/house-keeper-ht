@@ -1,5 +1,6 @@
 node_modules
 .agent
-.shared/*
+.shared/**/*
 .env
 .env.example
+dist/**/*

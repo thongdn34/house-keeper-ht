@@ -93,19 +93,20 @@ export default function RoomManagement() {
 
     return (
         <div className="page-container fade-in">
-            <header style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.875rem', fontWeight: '700' }}>Quản lý phòng</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Quản lý danh sách các phòng trong hệ thống</p>
+                    <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>Quản lý phòng</h1>
+                    <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Hệ thống quản lý {rooms.length} phòng đang vận hành</p>
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.875rem' }}>
                     <button
                         className="btn-secondary"
                         onClick={fetchRooms}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                         disabled={loading}
+                        style={{ borderRadius: 'var(--radius-md)' }}
                     >
-                        <RotateCw size={20} className={loading ? 'animate-spin' : ''} /> Làm mới
+                        <RotateCw size={18} className={loading ? 'animate-spin' : ''} />
+                        Làm mới
                     </button>
                     <button className="btn-primary" onClick={handleAddRoom}>
                         <Plus size={20} /> Thêm phòng mới
@@ -113,79 +114,120 @@ export default function RoomManagement() {
                 </div>
             </header>
 
-            <div className="card" style={{ padding: '0' }}>
-                <div style={{ padding: '1.5rem', display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border)' }}>
-                    <div style={{ position: 'relative', flex: 1 }}>
-                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+                <div style={{ padding: '1.5rem 2rem', display: 'flex', gap: '1.5rem', borderBottom: '1px solid var(--border)', background: '#fffaf5' }}>
+                    <div className="search-input-wrapper" style={{ flex: 1 }}>
+                        <Search size={18} />
                         <input
                             type="text"
                             placeholder="Tìm kiếm theo tên phòng, nhà hoặc người thuê..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{ width: '100%', padding: '0.625rem 1rem 0.625rem 2.5rem', borderRadius: '0.5rem', border: '1px solid var(--border)', fontSize: '0.875rem' }}
+                            className="search-input"
                         />
                     </div>
-                    <button style={{ padding: '0.5rem 1rem', border: '1px solid var(--border)', borderRadius: '0.5rem', background: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)' }}>
-                        <Filter size={18} /> Lọc
+                    <button style={{ padding: '0.75rem 1.25rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', background: 'white', display: 'flex', alignItems: 'center', gap: '0.625rem', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.875rem' }}>
+                        <Filter size={18} /> Lọc kết quả
                     </button>
                 </div>
 
-                <div className="table-container" style={{ border: 'none', borderRadius: '0' }}>
+                <div className="table-container" style={{ border: 'none', borderRadius: '0', boxShadow: 'none' }}>
                     {loading && rooms.length === 0 ? (
-                        <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Đang tải danh sách phòng...</div>
+                        <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <RotateCw size={40} className="animate-spin" style={{ color: 'var(--primary)', marginBottom: '1rem', opacity: 0.5 }} />
+                            <p style={{ fontWeight: '500' }}>Đang tải danh sách phòng...</p>
+                        </div>
                     ) : (
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Phòng</th>
-                                    <th>Nhà</th>
+                                    <th>Thông tin phòng</th>
+                                    <th>Khu vực / Nhà</th>
                                     <th>Trạng thái</th>
-                                    <th>Người thuê</th>
+                                    <th>Khách thuê hiện tại</th>
                                     <th style={{ textAlign: 'right' }}>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredRooms.length > 0 ? filteredRooms.map((room) => (
                                     <tr key={room.id}>
-                                        <td style={{ fontWeight: '600' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                <div style={{ width: '32px', height: '32px', background: '#e0f2fe', color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '0.5rem', fontSize: '10px' }}>
-                                                    Phòng
+                                        <td>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <div style={{
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    background: 'var(--primary-light)',
+                                                    color: 'var(--primary)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    borderRadius: '0.75rem',
+                                                    fontWeight: '800',
+                                                    fontSize: '0.875rem'
+                                                }}>
+                                                    {room.name.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <div>{room.name}</div>
-                                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>ID: #{room.id.slice(0, 8)}</div>
+                                                    <div style={{ fontWeight: '700', fontSize: '1rem' }}>Phòng {room.name}</div>
+                                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500' }}>Mã phòng: {room.id.slice(0, 8).toUpperCase()}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{room.house}</td>
+                                        <td>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
+                                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--secondary)', opacity: 0.4 }}></span>
+                                                {room.house}
+                                            </div>
+                                        </td>
                                         <td>
                                             <span className={`status-badge ${room.status === 'Còn trống' ? 'status-empty' : 'status-occupied'}`}>
+                                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor', marginRight: '0.5rem', display: 'inline-block' }}></span>
                                                 {room.status}
                                             </span>
                                         </td>
-                                        <td style={{ color: room.tenant === '-' ? 'var(--text-muted)' : 'inherit' }}>{room.tenant}</td>
+                                        <td>
+                                            {room.tenant === '-' ? (
+                                                <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem', fontStyle: 'italic', opacity: 0.6 }}>Chưa có khách</span>
+                                            ) : (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600' }}>
+                                                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#e0e7ff', color: '#4338ca', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px' }}>
+                                                        {room.tenant.charAt(0)}
+                                                    </div>
+                                                    {room.tenant}
+                                                </div>
+                                            )}
+                                        </td>
                                         <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
                                                 <button
                                                     onClick={() => handleEditRoom(room)}
-                                                    style={{ padding: '0.4rem', borderRadius: '0.4rem', border: 'none', background: '#fef3c7', color: '#d97706', cursor: 'pointer' }}
+                                                    style={{ padding: '0.625rem', borderRadius: '0.625rem', border: 'none', background: '#fef3c7', color: '#d97706', cursor: 'pointer', transition: 'all 0.2s' }}
+                                                    onMouseOver={(e) => e.currentTarget.style.background = '#fde68a'}
+                                                    onMouseOut={(e) => e.currentTarget.style.background = '#fef3c7'}
+                                                    title="Chỉnh sửa"
                                                 >
-                                                    <Edit2 size={16} />
+                                                    <Edit2 size={18} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteRoom(room.id)}
-                                                    style={{ padding: '0.4rem', borderRadius: '0.4rem', border: 'none', background: '#fee2e2', color: '#dc2626', cursor: 'pointer' }}
+                                                    style={{ padding: '0.625rem', borderRadius: '0.625rem', border: 'none', background: '#ffe4e6', color: '#e11d48', cursor: 'pointer', transition: 'all 0.2s' }}
+                                                    onMouseOver={(e) => e.currentTarget.style.background = '#fecdd3'}
+                                                    onMouseOut={(e) => e.currentTarget.style.background = '#ffe4e6'}
+                                                    title="Xóa"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan="5" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
-                                            {searchTerm ? 'Không tìm thấy phòng nào phù hợp' : 'Chưa có phòng nào. Hãy thêm phòng mới!'}
+                                        <td colSpan="5" style={{ textAlign: 'center', padding: '5rem 2rem' }}>
+                                            <div style={{ opacity: 0.5, marginBottom: '1rem' }}>
+                                                <Search size={48} style={{ color: 'var(--text-muted)' }} />
+                                            </div>
+                                            <h4 style={{ fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Không tìm thấy kết quả</h4>
+                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{searchTerm ? 'Thử tìm kiếm với từ khóa khác' : 'Chưa có phòng nào được đăng ký trong hệ thống'}</p>
                                         </td>
                                     </tr>
                                 )}

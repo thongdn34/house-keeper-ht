@@ -76,97 +76,134 @@ export default function Dashboard() {
 
     return (
         <div className="page-container fade-in">
-            <header style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.875rem', fontWeight: '700' }}>Dashboard</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Tổng quan hệ thống quản lý phòng trọ</p>
+                    <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>Dashboard</h1>
+                    <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Chào mừng trở lại! Dưới đây là tổng quan hệ thống của bạn.</p>
                 </div>
                 <button
                     onClick={fetchData}
                     className="btn-secondary"
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.625rem 1.25rem',
-                        borderRadius: '0.75rem',
-                        backgroundColor: 'white',
-                        border: '1px solid var(--border)',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s'
-                    }}
                     disabled={isRefreshing}
+                    style={{ borderRadius: 'var(--radius-full)' }}
                 >
                     <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
-                    {isRefreshing ? 'Đang làm mới...' : 'Làm mới'}
+                    {isRefreshing ? 'Đang làm mới...' : 'Làm mới dữ liệu'}
                 </button>
             </header>
 
             {loading && !isRefreshing ? (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
-                    <RefreshCw size={48} className="animate-spin" style={{ color: 'var(--primary)' }} />
+                    <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                        <RefreshCw size={40} className="animate-spin" style={{ color: 'var(--primary)' }} />
+                        <p style={{ color: 'var(--text-muted)', fontWeight: '600' }}>Gửi yêu cầu tới Firebase...</p>
+                    </div>
                 </div>
             ) : (
                 <>
                     <div className="stats-grid">
                         {stats.map((stat, index) => (
-                            <div key={index} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <div style={{ backgroundColor: `${stat.color}15`, color: stat.color, padding: '0.75rem', borderRadius: '0.75rem' }}>
-                                    {stat.icon}
+                            <div key={index} className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                                <div style={{
+                                    backgroundColor: `${stat.color}15`,
+                                    color: stat.color,
+                                    padding: '1rem',
+                                    borderRadius: '1rem',
+                                    boxShadow: `0 8px 16px -4px ${stat.color}20`
+                                }}>
+                                    {React.cloneElement(stat.icon, { size: 28 })}
                                 </div>
                                 <div>
-                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{stat.title}</p>
-                                    <h3 style={{ fontSize: '1.5rem', fontWeight: '700' }}>{stat.value}</h3>
+                                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.025em', marginBottom: '0.25rem' }}>{stat.title}</p>
+                                    <h3 style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--text-main)' }}>{stat.value}</h3>
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     <div className="card" style={{ position: 'relative', overflow: 'hidden' }}>
-                        <h3 style={{ marginBottom: '1.5rem', fontSize: '1.125rem', fontWeight: '600' }}>Doanh thu gần đây</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Biểu đồ doanh thu</h3>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>
+                                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--primary)' }}></span>
+                                    Doanh thu (VNĐ)
+                                </div>
+                            </div>
+                        </div>
 
                         {chartData.length > 0 ? (
-                            <div style={{ width: '100%', height: 300 }}>
+                            <div style={{ width: '100%', height: 320 }}>
                                 <ResponsiveContainer width="100%" height="100%">
                                     <AreaChart data={chartData}>
                                         <defs>
                                             <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.1} />
-                                                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
+                                                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
+                                                <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                        <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                                        <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                                        <Tooltip
-                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                                        <XAxis
+                                            dataKey="name"
+                                            stroke="var(--text-muted)"
+                                            fontSize={12}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tick={{ fontWeight: 500 }}
+                                            dy={10}
                                         />
-                                        <Area type="monotone" dataKey="revenue" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorRev)" strokeWidth={2} />
+                                        <YAxis
+                                            stroke="var(--text-muted)"
+                                            fontSize={12}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            tick={{ fontWeight: 500 }}
+                                            tickFormatter={(value) => `${value / 1000000}M`}
+                                        />
+                                        <Tooltip
+                                            contentStyle={{
+                                                borderRadius: 'var(--radius-md)',
+                                                border: '1px solid var(--border)',
+                                                boxShadow: 'var(--shadow-lg)',
+                                                padding: '1rem'
+                                            }}
+                                            itemStyle={{ fontWeight: 700, color: 'var(--primary)' }}
+                                            cursor={{ stroke: 'var(--primary)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                        />
+                                        <Area
+                                            type="monotone"
+                                            dataKey="revenue"
+                                            stroke="var(--primary)"
+                                            fillOpacity={1}
+                                            fill="url(#colorRev)"
+                                            strokeWidth={3}
+                                            animationDuration={1500}
+                                        />
                                     </AreaChart>
                                 </ResponsiveContainer>
                             </div>
                         ) : (
                             <div style={{
-                                height: 300,
+                                height: 320,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(14, 165, 233, 0.03) 100%)',
-                                borderRadius: 'var(--radius-md)',
+                                background: 'rgba(217, 119, 6, 0.02)',
+                                borderRadius: 'var(--radius-lg)',
                                 border: '1px dashed var(--border)'
                             }}>
                                 <div style={{
-                                    backgroundColor: '#f1f5f9',
-                                    padding: '1rem',
+                                    backgroundColor: 'var(--primary-light)',
+                                    padding: '1.25rem',
                                     borderRadius: '50%',
-                                    marginBottom: '1rem',
-                                    color: 'var(--text-muted)'
+                                    marginBottom: '1.25rem',
+                                    color: 'var(--primary)'
                                 }}>
-                                    <AreaChart size={32} />
+                                    <Home size={32} />
                                 </div>
-                                <h4 style={{ fontWeight: '600', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Chưa có dữ liệu doanh thu</h4>
-                                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tính năng thống kê sẽ hiển thị khi có dữ liệu thanh toán (Coming Soon)</p>
+                                <h4 style={{ fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.5rem', fontSize: '1.125rem' }}>Dữ liệu đang được tổng hợp</h4>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem', maxWidth: '300px', textAlign: 'center' }}>Khi có các giao dịch thanh toán, biểu đồ phân tích doanh thu sẽ hiển thị tại đây.</p>
                             </div>
                         )}
                     </div>

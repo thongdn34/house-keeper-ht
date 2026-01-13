@@ -25,23 +25,39 @@ export default function Login() {
     return (
         <div className="auth-wrapper">
             <div className="auth-card fade-in">
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                    <div style={{ backgroundColor: 'var(--primary)', padding: '1rem', borderRadius: '1rem', color: 'white' }}>
-                        <Home size={32} />
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                    <div style={{
+                        backgroundColor: 'var(--primary)',
+                        padding: '1.25rem',
+                        borderRadius: '1.5rem',
+                        color: 'white',
+                        boxShadow: '0 10px 20px -5px rgba(217, 119, 6, 0.4)'
+                    }}>
+                        <Home size={40} />
                     </div>
                 </div>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.5rem' }}>Happy House</h1>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Hệ thống quản lý phòng trọ</p>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '900', color: 'var(--secondary)', marginBottom: '0.5rem', letterSpacing: '-0.025em' }}>Happy House</h1>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontWeight: '500', fontSize: '1rem' }}>Hệ thống quản lý lưu trú thông minh</p>
 
-                <button className="btn-primary" style={{ width: '100%' }} onClick={loginWithGoogle}>
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20" />
-                    Đăng nhập bằng Gmail
-                </button>
+                <div style={{ background: '#fff9eb', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid #fde68a', marginBottom: '2rem' }}>
+                    <p style={{ fontSize: '0.875rem', color: '#92400e', fontWeight: '600', marginBottom: '1rem' }}>Chào mừng bạn quay trở lại!</p>
+                    <button className="btn-primary" style={{ width: '100%', fontSize: '1rem', height: '3.5rem' }} onClick={loginWithGoogle}>
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="22" style={{ marginRight: '0.5rem' }} />
+                        Kết nối bằng Google
+                    </button>
+                </div>
 
-                <p style={{ marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                    © 2024 Happy House. All rights reserved.
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>Hỗ trợ 24/7</span>
+                    <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
+                </div>
+
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+                    © 2024 Happy House Team. Version 2.0.0
                 </p>
             </div>
         </div>
     );
 }
+
