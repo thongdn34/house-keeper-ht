@@ -133,7 +133,7 @@ export default function RoomManagement({ user }) {
                     </button>
                 </div>
 
-                <div className="table-container" style={{ border: 'none', borderRadius: '0', boxShadow: 'none' }}>
+                <div className="table-container hide-on-mobile" style={{ border: 'none', borderRadius: '0', boxShadow: 'none' }}>
                     {loading && rooms.length === 0 ? (
                         <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                             <RotateCw size={40} className="animate-spin" style={{ color: 'var(--primary)', marginBottom: '1rem', opacity: 0.5 }} />
@@ -204,8 +204,6 @@ export default function RoomManagement({ user }) {
                                                 <button
                                                     onClick={() => handleEditRoom(room)}
                                                     style={{ padding: '0.625rem', borderRadius: '0.625rem', border: 'none', background: '#fef3c7', color: '#d97706', cursor: 'pointer', transition: 'all 0.2s' }}
-                                                    onMouseOver={(e) => e.currentTarget.style.background = '#fde68a'}
-                                                    onMouseOut={(e) => e.currentTarget.style.background = '#fef3c7'}
                                                     title="Chỉnh sửa"
                                                 >
                                                     <Edit2 size={18} />
@@ -213,8 +211,6 @@ export default function RoomManagement({ user }) {
                                                 <button
                                                     onClick={() => handleDeleteRoom(room.id)}
                                                     style={{ padding: '0.625rem', borderRadius: '0.625rem', border: 'none', background: '#ffe4e6', color: '#e11d48', cursor: 'pointer', transition: 'all 0.2s' }}
-                                                    onMouseOver={(e) => e.currentTarget.style.background = '#fecdd3'}
-                                                    onMouseOut={(e) => e.currentTarget.style.background = '#ffe4e6'}
                                                     title="Xóa"
                                                 >
                                                     <Trash2 size={18} />
@@ -235,6 +231,69 @@ export default function RoomManagement({ user }) {
                                 )}
                             </tbody>
                         </table>
+                    )}
+                </div>
+
+                <div className="room-card-list show-on-mobile">
+                    {loading && filteredRooms.length === 0 ? (
+                        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <RotateCw size={32} className="animate-spin" style={{ color: 'var(--primary)', marginBottom: '1rem' }} />
+                            <p>Đang tải...</p>
+                        </div>
+                    ) : filteredRooms.map((room) => (
+                        <div key={room.id} className="room-card">
+                            <div className="room-card-header">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <div style={{
+                                        width: '36px',
+                                        height: '36px',
+                                        background: 'var(--primary-light)',
+                                        color: 'var(--primary)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '0.5rem',
+                                        fontWeight: '800'
+                                    }}>
+                                        {room.name.charAt(0)}
+                                    </div>
+                                    <div style={{ fontWeight: '700' }}>Phòng {room.name}</div>
+                                </div>
+                                <span className={`status-badge ${room.status === 'Còn trống' ? 'status-empty' : 'status-occupied'}`} style={{ fontSize: '0.7rem', padding: '0.25rem 0.75rem' }}>
+                                    {room.status}
+                                </span>
+                            </div>
+                            <div className="room-card-body">
+                                <div className="room-card-info-row">
+                                    <span className="room-card-info-label">Địa chỉ:</span>
+                                    <span className="room-card-info-value">{room.house}</span>
+                                </div>
+                                <div className="room-card-info-row">
+                                    <span className="room-card-info-label">Khách thuê:</span>
+                                    <span className="room-card-info-value">{room.tenant === '-' ? 'Chưa có' : room.tenant}</span>
+                                </div>
+                            </div>
+                            <div className="room-card-footer">
+                                <button
+                                    onClick={() => handleEditRoom(room)}
+                                    style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #fde68a', background: '#fffbeb', color: '#d97706', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                                >
+                                    <Edit2 size={16} /> Sửa
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteRoom(room.id)}
+                                    style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid #fecdd3', background: '#fff1f2', color: '#e11d48', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                                >
+                                    <Trash2 size={16} /> Xóa
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    {!loading && filteredRooms.length === 0 && (
+                        <div style={{ padding: '3rem 1rem', textAlign: 'center' }}>
+                            <Search size={40} style={{ color: 'var(--text-muted)', opacity: 0.3, marginBottom: '1rem' }} />
+                            <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Không tìm thấy phòng phù hợp</p>
+                        </div>
                     )}
                 </div>
             </div>

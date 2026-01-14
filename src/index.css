@@ -111,6 +111,25 @@ textarea:focus {
   z-index: 1;
 }
 
+/* Visibility Utilities */
+.hide-on-mobile {
+  display: block;
+}
+
+.show-on-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .show-on-mobile {
+    display: block !important;
+  }
+}
+
 .page-container {
   padding: 2.5rem;
   max-width: 1440px;
@@ -304,6 +323,60 @@ tr:last-child td {
 
 tr:hover td {
   background-color: #fffaf0;
+}
+
+/* Room Card List for Mobile */
+.room-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.room-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.room-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.room-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.room-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.room-card-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.room-card-info-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.room-card-info-value {
+  font-weight: 600;
+  color: var(--text-main);
 }
 
 .status-badge {

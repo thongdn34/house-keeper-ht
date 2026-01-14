@@ -91,7 +91,7 @@ export default function RentRoom({ user }) {
 
     return (
         <div className="page-container fade-in">
-            <header style={{ marginBottom: '2.5rem' }}>
+            <header className="page-header" style={{ marginBottom: '2.5rem' }}>
                 <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>Đăng ký thuê phòng</h1>
                 <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Điền thông tin khách hàng để thực hiện hợp đồng thuê mới</p>
             </header>
