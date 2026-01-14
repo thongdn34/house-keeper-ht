@@ -117,7 +117,7 @@ textarea:focus {
 }
 
 .show-on-mobile {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 768px) {
@@ -126,7 +126,8 @@ textarea:focus {
   }
 
   .show-on-mobile {
-    display: block !important;
+    display: flex !important;
+    /* Changed to flex to match room-card-list needs */
   }
 }
 
@@ -327,7 +328,6 @@ tr:hover td {
 
 /* Room Card List for Mobile */
 .room-card-list {
-  display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
