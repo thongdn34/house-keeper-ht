@@ -4,7 +4,7 @@ import { Home, Users, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { db } from '../firebase/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 
-export default function Dashboard() {
+export default function Dashboard({ user }) {
     const [stats, setStats] = useState([
         { title: 'Tổng nhà', value: '...', icon: <Home size={24} />, color: '#0ea5e9' },
         { title: 'Tổng phòng', value: '...', icon: <CheckCircle size={24} />, color: '#10b981' },
@@ -19,7 +19,7 @@ export default function Dashboard() {
         setIsRefreshing(true);
         try {
             // Fetch Rooms
-            const roomsSnapshot = await getDocs(collection(db, "rooms"));
+            const roomsSnapshot = await getDocs(query(collection(db, "rooms"), where("userId", "==", user.uid)));
             const roomsData = roomsSnapshot.docs.map(doc => doc.data());
 
             // Calculate Stats
@@ -34,7 +34,11 @@ export default function Dashboard() {
             // For now, let's check a hypothetical invoices collection or set to 0
             let unpaidInvoices = 0;
             try {
-                const unpaidSnapshot = await getDocs(query(collection(db, "invoices"), where("status", "==", "Chưa thanh toán")));
+                const unpaidSnapshot = await getDocs(query(
+                    collection(db, "invoices"),
+                    where("status", "==", "Chưa thanh toán"),
+                    where("userId", "==", user.uid)
+                ));
                 unpaidInvoices = unpaidSnapshot.size;
             } catch (e) {
                 console.warn("Invoices collection not found or accessible", e);
@@ -50,7 +54,7 @@ export default function Dashboard() {
 
             // Fetch Chart Data
             try {
-                const revenueSnapshot = await getDocs(collection(db, "revenue"));
+                const revenueSnapshot = await getDocs(query(collection(db, "revenue"), where("userId", "==", user.uid)));
                 if (!revenueSnapshot.empty) {
                     const revData = revenueSnapshot.docs.map(doc => doc.data()).sort((a, b) => a.order - b.order);
                     setChartData(revData);

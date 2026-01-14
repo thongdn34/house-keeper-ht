@@ -152,9 +152,9 @@ function App() {
 
                 <section style={{ flex: 1, overflowY: 'auto' }}>
                     <Routes>
-                        <Route path="/" element={<ProtectedRoute user={user}><Dashboard /></ProtectedRoute>} />
-                        <Route path="/rooms" element={<ProtectedRoute user={user}><RoomManagement /></ProtectedRoute>} />
-                        <Route path="/rent" element={<ProtectedRoute user={user}><RentRoom /></ProtectedRoute>} />
+                        <Route path="/" element={<ProtectedRoute user={user}><Dashboard user={user} /></ProtectedRoute>} />
+                        <Route path="/rooms" element={<ProtectedRoute user={user}><RoomManagement user={user} /></ProtectedRoute>} />
+                        <Route path="/rent" element={<ProtectedRoute user={user}><RentRoom user={user} /></ProtectedRoute>} />
                         <Route path="/tenants" element={
                             <ProtectedRoute user={user}>
                                 <div className="page-container glass-card" style={{ margin: '2.5rem' }}>

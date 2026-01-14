@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { db } from '../firebase/config';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
 import { Plus, Search, Edit2, Trash2, Filter, RotateCw } from 'lucide-react';
 
-export default function RoomManagement() {
+export default function RoomManagement({ user }) {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -11,7 +11,8 @@ export default function RoomManagement() {
     const fetchRooms = useCallback(async () => {
         setLoading(true);
         try {
-            const querySnapshot = await getDocs(collection(db, "rooms"));
+            const q = query(collection(db, "rooms"), where("userId", "==", user.uid));
+            const querySnapshot = await getDocs(q);
             const roomsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             // Sắp xếp phòng theo tên để dễ theo dõi
             const sortedRooms = roomsData.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
@@ -37,7 +38,8 @@ export default function RoomManagement() {
                 name,
                 house: 'Nhà số 1',
                 status: 'Còn trống',
-                tenant: '-'
+                tenant: '-',
+                userId: user.uid
             };
             const docRef = await addDoc(collection(db, "rooms"), newRoom);
             setRooms(prev => [...prev, { id: docRef.id, ...newRoom }].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })));

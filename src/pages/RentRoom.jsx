@@ -21,7 +21,7 @@ const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-export default function RentRoom() {
+export default function RentRoom({ user }) {
     const [rooms, setRooms] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { register, handleSubmit, reset, watch, formState: { errors } } = useForm({
@@ -42,7 +42,11 @@ export default function RentRoom() {
             try {
                 // For now, we fetch rooms with status "Còn trống". 
                 // In a real app, we'd also check overlapping rentals between startDate and endDate.
-                const q = query(collection(db, "rooms"), where("status", "==", "Còn trống"));
+                const q = query(
+                    collection(db, "rooms"),
+                    where("status", "==", "Còn trống"),
+                    where("userId", "==", user.uid)
+                );
                 const querySnapshot = await getDocs(q);
                 const roomsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setRooms(roomsData);
@@ -61,7 +65,8 @@ export default function RentRoom() {
                 ...data,
                 startDate: data.startDate,
                 endDate: data.endDate,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                userId: user.uid
             });
 
             // 2. Cập nhật trạng thái phòng thành 'Đang thuê'
