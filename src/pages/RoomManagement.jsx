@@ -95,12 +95,12 @@ export default function RoomManagement({ user }) {
 
     return (
         <div className="page-container fade-in">
-            <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <header className="page-header" style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>Quản lý phòng</h1>
                     <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Hệ thống quản lý {rooms.length} phòng đang vận hành</p>
                 </div>
-                <div style={{ display: 'flex', gap: '0.875rem' }}>
+                <div style={{ display: 'flex', gap: '0.875rem', flexWrap: 'wrap' }}>
                     <button
                         className="btn-secondary"
                         onClick={fetchRooms}
@@ -117,18 +117,18 @@ export default function RoomManagement({ user }) {
             </header>
 
             <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-                <div style={{ padding: '1.5rem 2rem', display: 'flex', gap: '1.5rem', borderBottom: '1px solid var(--border)', background: '#fffaf5' }}>
-                    <div className="search-input-wrapper" style={{ flex: 1 }}>
+                <div style={{ padding: '1.5rem 2rem', display: 'flex', gap: '1.5rem', borderBottom: '1px solid var(--border)', background: '#fffaf5', flexWrap: 'wrap' }}>
+                    <div className="search-input-wrapper" style={{ flex: '1 1 300px' }}>
                         <Search size={18} />
                         <input
                             type="text"
-                            placeholder="Tìm kiếm theo tên phòng, nhà hoặc người thuê..."
+                            placeholder="Tìm kiếm..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="search-input"
                         />
                     </div>
-                    <button style={{ padding: '0.75rem 1.25rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', background: 'white', display: 'flex', alignItems: 'center', gap: '0.625rem', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.875rem' }}>
+                    <button style={{ padding: '0.75rem 1.25rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', background: 'white', display: 'flex', alignItems: 'center', gap: '0.625rem', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
                         <Filter size={18} /> Lọc kết quả
                     </button>
                 </div>

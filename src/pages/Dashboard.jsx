@@ -80,7 +80,7 @@ export default function Dashboard({ user }) {
 
     return (
         <div className="page-container fade-in">
-            <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <header className="dashboard-header" style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h1 style={{ fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>Dashboard</h1>
                     <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Chào mừng trở lại! Dưới đây là tổng quan hệ thống của bạn.</p>

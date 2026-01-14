@@ -96,9 +96,9 @@ export default function RentRoom({ user }) {
                 <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Điền thông tin khách hàng để thực hiện hợp đồng thuê mới</p>
             </header>
 
-            <div className="card glass-card" style={{ maxWidth: '900px', padding: '2.5rem' }}>
+            <div className="card glass-card rent-room-card" style={{ maxWidth: '900px', width: '100%', margin: '0 auto' }}>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+                    <div className="form-grid">
                         <div className="form-group">
                             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '700', marginBottom: '0.625rem', color: 'var(--text-main)' }}>Họ và tên khách hàng</label>
                             <div className="search-input-wrapper">
@@ -214,25 +214,25 @@ export default function RentRoom({ user }) {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '2rem', flexWrap: 'wrap' }}>
                         <button
                             type="button"
                             onClick={() => reset()}
                             className="btn-secondary"
-                            style={{ padding: '0.875rem 2rem' }}
+                            style={{ padding: '0.875rem 2rem', flex: '1 1 auto' }}
                         >
                             Làm mới form
                         </button>
                         <button
                             type="submit"
                             className="btn-primary"
-                            style={{ padding: '0.875rem 2.5rem' }}
+                            style={{ padding: '0.875rem 2.5rem', flex: '1 1 auto' }}
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
-                                <><Loader2 className="animate-spin" size={20} /> Đang lưu thông tin...</>
+                                <><Loader2 className="animate-spin" size={20} /> Đang lưu...</>
                             ) : (
-                                "Hoàn tất & Ký hợp đồng"
+                                "Ký hợp đồng"
                             )}
                         </button>
                     </div>
