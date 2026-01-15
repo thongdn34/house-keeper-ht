@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Home, Users, CheckCircle, Clock, RefreshCw } from 'lucide-react';
+import { Home, Users, CheckCircle, Clock, RefreshCw, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { db } from '../firebase/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 
@@ -11,9 +11,123 @@ export default function Dashboard({ user }) {
         { title: 'Khách thuê', value: '...', icon: <Users size={24} />, color: '#8b5cf6' },
         { title: 'Chưa thanh toán', value: '...', icon: <Clock size={24} />, color: '#f59e0b' },
     ]);
-    const [chartData, setChartData] = useState([]);
+    const [invoices, setInvoices] = useState([]);
+    const [timeRange, setTimeRange] = useState('month'); // 'week', 'month', 'year'
     const [loading, setLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const processChartData = useCallback((invoicesData, range) => {
+        const now = new Date();
+
+        if (range === 'week') {
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(now.getDate() - i);
+                const dayName = d.toLocaleDateString('vi-VN', { weekday: 'short' });
+                const dateStr = d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+                days.push({
+                    name: `${dayName} ${dateStr}`,
+                    dateKey: d.toISOString().split('T')[0],
+                    revenue: 0
+                });
+            }
+
+            invoicesData.forEach(inv => {
+                const invDate = inv.date.split('T')[0];
+                const day = days.find(d => d.dateKey === invDate);
+                if (day) day.revenue += inv.amount;
+            });
+            return days;
+        }
+
+        if (range === 'month') {
+            const months = [
+                'Tháng 01', 'Tháng 02', 'Tháng 03', 'Tháng 04', 'Tháng 05', 'Tháng 06',
+                'Tháng 07', 'Tháng 08', 'Tháng 09', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+            ];
+            const data = months.map(m => ({ name: m, revenue: 0 }));
+            const currentYear = now.getFullYear();
+
+            invoicesData.forEach(inv => {
+                const d = new Date(inv.date);
+                if (d.getFullYear() === currentYear) {
+                    data[d.getMonth()].revenue += inv.amount;
+                }
+            });
+            return data;
+        }
+
+        if (range === 'year') {
+            const currentYear = now.getFullYear();
+            const years = [];
+            for (let i = 4; i >= 0; i--) {
+                years.push({ name: (currentYear - i).toString(), revenue: 0 });
+            }
+
+            invoicesData.forEach(inv => {
+                const d = new Date(inv.date);
+                const yearStr = d.getFullYear().toString();
+                const yearData = years.find(y => y.name === yearStr);
+                if (yearData) yearData.revenue += inv.amount;
+            });
+            return years;
+        }
+        return [];
+    }, []);
+
+    const growthMetrics = useMemo(() => {
+        const now = new Date();
+        const getPeriodRevenue = (daysBack, durationDays) => {
+            const end = new Date();
+            end.setDate(now.getDate() - daysBack);
+            const start = new Date();
+            start.setDate(end.getDate() - durationDays);
+
+            return invoices.reduce((sum, inv) => {
+                const invDate = new Date(inv.date);
+                if (invDate >= start && invDate < end) {
+                    return sum + inv.amount;
+                }
+                return sum;
+            }, 0);
+        };
+
+        const calculateGrowth = (durationDays, label) => {
+            const current = getPeriodRevenue(0, durationDays);
+            const previous = getPeriodRevenue(durationDays, durationDays);
+
+            let percentage = 0;
+            if (previous > 0) {
+                percentage = ((current - previous) / previous) * 100;
+            } else if (current > 0) {
+                percentage = 100;
+            }
+
+            return {
+                label,
+                current,
+                previous,
+                percentage: percentage.toFixed(1),
+                isUp: percentage > 0,
+                isDown: percentage < 0,
+                isNeutral: percentage === 0
+            };
+        };
+
+        // Standardize durations in days (approximate for months/years)
+        return [
+            calculateGrowth(10, '10 ngày'),
+            calculateGrowth(30, '30 ngày'),
+            calculateGrowth(90, '3 tháng'),
+            calculateGrowth(180, '6 tháng'),
+            calculateGrowth(365, '1 năm')
+        ];
+    }, [invoices]);
+
+    const chartData = useMemo(() => {
+        return processChartData(invoices, timeRange);
+    }, [invoices, timeRange, processChartData]);
 
     const fetchData = useCallback(async () => {
         setIsRefreshing(true);
@@ -52,18 +166,18 @@ export default function Dashboard({ user }) {
                 { title: 'Chưa thanh toán', value: unpaidInvoices.toString(), icon: <Clock size={24} />, color: '#f59e0b' },
             ]);
 
-            // Fetch Chart Data
+            // Fetch Invoices for Chart Data
             try {
-                const revenueSnapshot = await getDocs(query(collection(db, "revenue"), where("userId", "==", user.uid)));
-                if (!revenueSnapshot.empty) {
-                    const revData = revenueSnapshot.docs.map(doc => doc.data()).sort((a, b) => a.order - b.order);
-                    setChartData(revData);
-                } else {
-                    setChartData([]);
-                }
+                const invoicesSnapshot = await getDocs(query(
+                    collection(db, "invoices"),
+                    where("userId", "==", user.uid),
+                    where("status", "==", "Đã thanh toán")
+                ));
+                const invData = invoicesSnapshot.docs.map(doc => doc.data());
+                setInvoices(invData);
             } catch (e) {
-                console.warn("Revenue collection not found", e);
-                setChartData([]);
+                console.warn("Invoices collection not found", e);
+                setInvoices([]);
             }
 
         } catch (error) {
@@ -128,12 +242,82 @@ export default function Dashboard({ user }) {
                     <div className="card" style={{ position: 'relative', overflow: 'hidden' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                             <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Biểu đồ doanh thu</h3>
-                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    background: '#f1f5f9',
+                                    padding: '0.25rem',
+                                    borderRadius: 'var(--radius-md)',
+                                    border: '1px solid var(--border)',
+                                    gap: '0.125rem'
+                                }}>
+                                    {[
+                                        { id: 'week', label: 'Tuần' },
+                                        { id: 'month', label: 'Tháng' },
+                                        { id: 'year', label: 'Năm' }
+                                    ].map((range) => (
+                                        <button
+                                            key={range.id}
+                                            onClick={() => setTimeRange(range.id)}
+                                            style={{
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: 'calc(var(--radius-md) - 4px)',
+                                                border: 'none',
+                                                background: timeRange === range.id ? 'white' : 'transparent',
+                                                color: timeRange === range.id ? 'var(--primary)' : 'var(--text-muted)',
+                                                fontWeight: '700',
+                                                fontSize: '0.75rem',
+                                                boxShadow: timeRange === range.id ? 'var(--shadow-sm)' : 'none',
+                                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                        >
+                                            {range.label}
+                                        </button>
+                                    ))}
+                                </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>
                                     <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--primary)' }}></span>
                                     Doanh thu (VNĐ)
                                 </div>
                             </div>
+                        </div>
+
+                        {/* New Growth Metrics Section */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                            gap: '1rem',
+                            marginBottom: '2rem',
+                            padding: '1.25rem',
+                            background: '#f8fafc',
+                            borderRadius: 'var(--radius-md)',
+                            border: '1px solid var(--border)'
+                        }}>
+                            {growthMetrics.map((m, idx) => (
+                                <div key={idx} style={{ textAlign: 'center' }}>
+                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                                        Vs. {m.label} trc
+                                    </p>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.25rem',
+                                        color: m.isUp ? '#10b981' : m.isDown ? '#ef4444' : 'var(--text-muted)',
+                                        fontWeight: '800',
+                                        fontSize: '1.125rem'
+                                    }}>
+                                        {m.isUp && <TrendingUp size={16} />}
+                                        {m.isDown && <TrendingDown size={16} />}
+                                        {m.isNeutral && <Minus size={16} />}
+                                        {m.percentage}%
+                                    </div>
+                                    <p style={{ fontSize: '0.625rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                                        {m.current.toLocaleString('vi-VN')} ₫
+                                    </p>
+                                </div>
+                            ))}
                         </div>
 
                         {chartData.length > 0 ? (
@@ -162,7 +346,11 @@ export default function Dashboard({ user }) {
                                             tickLine={false}
                                             axisLine={false}
                                             tick={{ fontWeight: 500 }}
-                                            tickFormatter={(value) => `${value / 1000000}M`}
+                                            tickFormatter={(value) => {
+                                                if (value >= 1000000) return `${value / 1000000}M`;
+                                                if (value >= 1000) return `${value / 1000}k`;
+                                                return value;
+                                            }}
                                         />
                                         <Tooltip
                                             contentStyle={{
@@ -171,7 +359,8 @@ export default function Dashboard({ user }) {
                                                 boxShadow: 'var(--shadow-lg)',
                                                 padding: '1rem'
                                             }}
-                                            itemStyle={{ fontWeight: 700, color: 'var(--primary)' }}
+                                            formatter={(value) => [new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value), "Doanh thu"]}
+                                            labelStyle={{ fontWeight: 700, marginBottom: '0.25rem' }}
                                             cursor={{ stroke: 'var(--primary)', strokeWidth: 1, strokeDasharray: '4 4' }}
                                         />
                                         <Area
